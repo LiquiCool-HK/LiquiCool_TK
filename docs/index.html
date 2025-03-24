@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>默认标题</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f0f2f5;
+            font-family: Arial, sans-serif;
+            animation: bg-fade 2s ease-in-out;
+        }
+
+        @keyframes bg-fade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 更大的Logo容器 */
+        .logo-container {
+            width: 40vw; 
+            max-width: 300px;
+            height: auto;
+            margin: 30px 0;
+        }
+
+        .logo {
+            width: 100%;
+            height: 100%;
+            animation: spin 1s linear 1 forwards;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(270deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 动态省略号效果 */
+        .status-text {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { 
+                text-indent: 0.2em; 
+            }
+        }
+
+        /* 语言切换按钮容器（Flex布局） */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 统一按钮样式 */
+        .language-btn {
+            flex: 1;
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-align: center;
+        }
+
+        .language-btn:hover {
+            background: #45a049;
+        }
+
+        .selected {
+            background: #2196F3 !important;
+            color: white;
+        }
+
+        /* 底部版权信息 */
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            background: #f0f2f5;
+        }
+
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .logo-container {
+                width: 60vw;
+                max-width: 250px;
+            }
+            .status-text {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-container {
+                width: 70vw;
+                max-width: 200px;
+            }
+        }
+
+        /* 大屏幕按钮最小宽度 */
+        @media (min-width: 768px) {
+            .language-btn {
+                min-width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo容器 -->
+    <div class="logo-container">
+        <img 
+            class="logo" 
+            src="logo.svg" 
+            alt="Logo" 
+            style="width: 100%; height: 100%; display: block;"
+        >
+    </div>
+
+    <!-- 状态文字 -->
+    <div class="status-text" id="statusText">网页建设中...</div>
+
+    <!-- 语言切换按钮 -->
+    <div class="language-switcher">
+        <button class="language-btn" onclick="setLanguage('zh-CN')">简</button>
+        <button class="language-btn" onclick="setLanguage('zh-TW')">繁</button>
+        <button class="language-btn" onclick="setLanguage('en')">EN</button>
+    </div>
+
+    <!-- 版权信息 -->
+    <div class="footer" id="copyrightInfo">
+        ©2025 立冷科技有限公司版权所有 <a href="mailto:liquicool@outlook.com">联系我们</a>
+    </div>
+
+<script>
+    const messages = {
+        'zh-CN': {
+            status: '网页建设中...',
+            copyright: '©2025 立冷科技有限公司版权所有 <a href="mailto:liquicool@outlook.com">联系我们</a>',
+            title: '网页建设中'
+        },
+        'zh-TW': {
+            status: '網站建設中...',
+            copyright: '©2025 立冷科技有限公司 版權所有 <a href="mailto:liquicool@outlook.com">聯絡我們</a>',
+            title: '網站建設中'
+        },
+        'en': {
+            status: 'Under Construction...',
+            copyright: '©2025 LiquiCool Technology Co., Ltd. All rights reserved <a href="mailto:liquicool@outlook.com">Contact Us</a>',
+            title: 'Under Construction'
+        }
+    };
+
+    function setLanguage(lang) {
+        document.getElementById('statusText').textContent = messages[lang].status;
+        document.getElementById('copyrightInfo').innerHTML = messages[lang].copyright;
+        document.title = messages[lang].title;
+
+        // 重置按钮选中状态
+        document.querySelectorAll('.language-btn').forEach(btn => btn.classList.remove('selected'));
+        event.target.classList.add('selected');
+        
+        // 保存用户选择
+        localStorage.setItem('preferredLang', lang);
+    }
+
+    function detectLanguage() {
+        const navLang = navigator.language || navigator.userLanguage;
+        let lang = 'zh-CN';
+
+        if (navLang.startsWith('zh-TW') || navLang.startsWith('zh-HK')) {
+            lang = 'zh-TW';
+        } else if (navLang.startsWith('en')) {
+            lang = 'en';
+        }
+
+        const savedLang = localStorage.getItem('preferredLang');
+        if (savedLang && messages.hasOwnProperty(savedLang)) {
+            lang = savedLang;
+        }
+
+        setLanguage(lang);
+    }
+
+    document.addEventListener('DOMContentLoaded', detectLanguage);
+</script>
+</body>
+</html>
